@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body{
+                background-color: rgb(37, 37, 37);
+                color: aliceblue;
+                padding: 2rem;
+                margin: 0;
+            }
+        
+        button {
+            background-color: #3d0000;
+            border-color: rgb(82, 82, 82);
+            border-radius: 8px;
+            color: rgb(180, 180, 180);
+            border-style: solid;
+            font-size: 1.2rem;
+            font-weight: 600;
+            height: 36px;
+        }
+
+        a,time {
+            color: aliceblue;
+        }
+
+        #mediacontrols {
+            width: 600px;
+            margin-top: 0.3rem;
+            margin-bottom: 0.3rem;
+            position: relative;
+        }
+
+        #timedisplay {
+         font-family: 'Courier New', Courier, monospace;
+         color: rgb(180, 180, 180);
+         font-size: 1.4rem;   
+         position: absolute;
+         right: 0px;
+         top:15px;
+        }
+
+        #controlbarrail {
+            background-color: darkred;
+            height: 3px;
+            margin-bottom: 0.6rem;
+            cursor: pointer;
+        }
+
+        #controlbarfill {
+            background-color: rgb(236, 216, 172);
+            height: 3px;
+            cursor: pointer;
+            width: 60px;
+        }
+    </style>
+</head>
+<body>
+    <!-- <a href="media/video.mp4">Video File</a>
+    <a href="media/video.mp4" download="media/video.mp4">Download Video File</a>
+    <hr/>
+    <iframe src="media/video.mp4" width="640" height="360"></iframe>
+
+    <hr/>
+    <audio src="media/audio.mp3" controls></audio>
+
+    <hr/>
+    <audio autoplay controls>
+        <source src="media/audio.mp3" type="audio/mpeg"/>
+        <source src="media/audio.ogg" type="audio/ogg;codecs=vorbis"/>
+    </audio>
+
+    <hr/>
+
+    <video src="media/video.mp4" preload="metadata" poster="media/still.png" width="600" controls>
+        <track default label="English" kind="captions" srclang="en" src="media/captions.vtt">
+    </video> -->
+
+    <video id="videoelement" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" preload="metadata" poster="media/still.png" width="600">
+    
+    </video>
+
+    <div id="mediacontrols">
+        <div id="controlbarrail">
+            <div id="controlbarfill">
+    
+            </div>
+        </div>
+        <button id="playbutton">Play</button>
+        <button id="pausebutton">Pause</button>
+        <div id="timedisplay">
+            <time id="positiondisplay">00:00</time>
+            <time id="durationdisplay">00:00</time>
+        </div>
+        
+    </div>
+
+    <script>
+        var isPlaying = false;
+        var media = document.querySelector('#videoelement');
+        var play = document.querySelector('#playbutton');
+        var pause = document.querySelector('#pausebutton');
+        var position = document.querySelector('#positiondisplay');
+        var duration = document.querySelector('#durationdisplay');
+        var rail = document.querySelector('#controlbarrail');
+        var fill = document.querySelector('#controlbarfill');
+
+        media.addEventListener('click',playPauseMedia);
+        media.addEventListener('waiting',mediaWaiting);
+        media.addEventListener('playing',mediaPlaying);
+        media.addEventListener('pause',mediaPause);
+
+        function mediaWaiting(){
+            console.log('mediaWaiting');
+            isPlaying = false;
+        }
+
+        function mediaPlaying(){
+            console.log('mediaPlaying');
+            isPlaying = true;
+        }
+
+        function mediaPause(){
+            console.log('mediaPause');
+            isPlaying = false;
+        }
+
+        function playPauseMedia(){
+            if(isPlaying){
+                media.pause();
+            } else{
+                media.play();
+            }
+        }
+
+        play.addEventListener('click',playMedia);
+
+        function playMedia(){
+            media.play();
+        }
+
+        pause.addEventListener('click',pauseMedia);
+
+        function pauseMedia(){
+            media.pause();   
+        }
+
+        rail.addEventListener('click',seekMedia);
+        fill.addEventListener('click',seekMedia);
+        function seekMedia(e){
+            media.currentTime = e.offsetX / rail.offsetWidth * media.duration;
+        }
+
+        media.addEventListener('loadedmetadata',updateTime);
+        media.addEventListener('timeupdate',updateTime);
+        function updateTime(){
+            position.textContent = timeDisplay(media.currentTime);
+            duration.textContent = timeDisplay(media.duration);
+            var currentLength = rail.clientWidth * (media.currentTime / media.duration);
+            fill.style.width = currentLength + 'px';
+        }
+
+        function timeDisplay(t) {
+            var minutes = Math.floor(t / 60);
+            var seconds = Math.floor(t - minutes * 60);
+            var minutevalue;
+            if (minutes < 10) {
+            minutevalue = '0' + minutes;
+            } else {
+            minutevalue = minutes;
+            }
+            var secondvalue;
+            if (seconds < 10) {
+            secondvalue = '0' + seconds;
+            } else {
+            secondvalue = seconds;
+            }
+            var mediatime = minutevalue + ':' + secondvalue;
+            return mediatime;
+        }
+    </script>
+</body>
+</html>
